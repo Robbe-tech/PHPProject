@@ -6,13 +6,13 @@ CREATE TABLE IF NOT EXISTS Products (
     ProductName VARCHAR(64),
     Descript TEXT,
     Stock INT UNSIGNED NOT NULL,
+    ProductType VARCHAR(1) NOT NULL,
     WeightG INT UNSIGNED NOT NULL,
     Resizable TINYINT(1) UNSIGNED,
     Electrical TINYINT(1) UNSIGNED,
     Diameter INT UNSIGNED,
     Manufacturer VARCHAR(100),
     HeadType VARCHAR(1),
-    ProductType VARCHAR(1) NOT NULL,
     PRIMARY KEY (ProductID)
 );
 
