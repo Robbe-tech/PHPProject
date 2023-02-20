@@ -3,7 +3,7 @@ class CartObject{
     private $ID;
     private $Ammount;
 
-    public function __construct($cID = 0, $cAmmount = 0){
+    public function __construct($cID, $cAmmount = 1){
         $this->ID=$cID;
         $this->Ammount=$cAmmount;
     }

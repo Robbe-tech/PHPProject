@@ -4,24 +4,16 @@
 CREATE TABLE IF NOT EXISTS Products (
     ProductID INT UNSIGNED NOT NULL AUTO_INCREMENT,
     ProductName VARCHAR(64),
-    ProductPrice INT UNSIGNED NOT NULL,
     Descript TEXT,
     Stock INT UNSIGNED NOT NULL,
     WeightG INT UNSIGNED NOT NULL,
     Resizable TINYINT(1) UNSIGNED,
     Electrical TINYINT(1) UNSIGNED,
-    PRIMARY KEY (ProductID)
-);
-
-CREATE TABLE IF NOT EXISTS Heads (
-    HeadID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    ProductID INT UNSIGNED NOT NULL,
-    Diameter INT UNSIGNED NOT NULL,
+    Diameter INT UNSIGNED,
     Manufacturer VARCHAR(100),
     HeadType VARCHAR(1),
-    ProductType VARCHAR(1),
-    PRIMARY KEY (HeadID),
-    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+    ProductType VARCHAR(1) NOT NULL,
+    PRIMARY KEY (ProductID)
 );
 
 CREATE TABLE IF NOT EXISTS Kits (
@@ -53,6 +45,7 @@ CREATE TABLE IF NOT EXISTS Images (
 
 CREATE TABLE IF NOT EXISTS Addresses (
     AddressID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    Country VARCHAR(56),
     PostalCode INT(7) UNSIGNED,
     City VARCHAR(85),
     Street VARCHAR(100),
