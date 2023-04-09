@@ -1,9 +1,9 @@
 <?php
 class CartObject{
-    private $ID;
-    private $Ammount;
+    private int $ID;
+    private int $Ammount;
 
-    public function __construct($cID, $cAmmount = 1){
+    public function __construct(int $cID, int $cAmmount = 1){
         $this->ID=$cID;
         $this->Ammount=$cAmmount;
     }
@@ -11,14 +11,14 @@ class CartObject{
     public function getID(){
         return $this->ID;
     }
-    public function setID($xID){
+    public function setID(int $xID){
         $this->ID = $xID;
     }
 
     public function getAmmount(){
         return $this->Ammount;
     }
-    public function setAmmount($xAmmount){
+    public function setAmmount(int $xAmmount){
         $this->Ammount = $xAmmount;
     }
 }

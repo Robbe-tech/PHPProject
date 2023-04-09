@@ -11,7 +11,7 @@ nav {
     background-color: darkcyan;
 }
 
-nav a {
+nav ul a li {
     float: left;
     display: block;
     font-weight: bold;
@@ -21,14 +21,24 @@ nav a {
     border-right: black 1px solid;
 }
 
-nav a:hover{
+nav ul a li img {
+    background: transparent;
+    height: 44px;
+}
+
+nav ul a li:hover{
     background-color: rgb(0, 117, 117);
 }
 
-nav a:last-child {
+.cart, .login {
     float: right;
     border-left: black 1px solid;
     border-right: 0px;
+}
+
+.cart {
+    padding: 0;
+    margin: 0;
 }
 
 nav:after{

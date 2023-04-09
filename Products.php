@@ -234,14 +234,14 @@ if(!isset($_SESSION['sid']))
                 <a href="Home.php">Home<</a>
                 <a href="Products.php">Products</a>
                 <?php
-                if ($_SESSION['Login']){
-                    echo '<a href="Cart.php">cart</a>';
-                }
                 if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
                     echo '<a href="Users.php">Users</a>';
                 }
                 if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
                     echo '<a href="AddProduct.php">Add product</a>';
+                }
+                if ($_SESSION['Login']){
+                    echo '<a href="Cart.php">cart</a>';
                 }
                 if ($_SESSION['Login']){
                     echo '<a href="LogOut.php">Log out</a>';

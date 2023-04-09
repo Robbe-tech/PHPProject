@@ -1,12 +1,12 @@
 <?php
 class Product
 {
-    private $Image;
-    private $Name;
-    private $Price;
-    private $Description;
+    private string $Image;
+    private string $Name;
+    private int $Price;
+    private string $Description;
     
-    public function __construct($cImage="Images/NoImage.png", $cName="", $cPrice=0, $cDescription="") {
+    public function __construct(string $cImage="Images/NoImage.png", string $cName="", int $cPrice=0, string $cDescription="") {
         $this->Image=$cImage;
         $this->Name=$cName;
         $this->Price=$cPrice;
@@ -18,29 +18,29 @@ class Product
     public function getImage() {
         return $this->Image;
     }
-    public function setImage($ximage) {
-        $this->Image = $ximage;
+    public function setImage(string $xImage) {
+        $this->Image = $xImage;
     }
 
     public function getName() {
         return $this->Name;
     }
-    public function setName($xname) {
-        $this->Name = $xname;
+    public function setName(string $xName) {
+        $this->Name = $xName;
     }
 
     public function getPrice() {
         return $this->Price;
     }
-    public function setPrice($xprice) {
-        $this->Price = $xprice;
+    public function setPrice(int $xPrice) {
+        $this->Price = $xPrice;
     }
 
     public function getDescription() {
         return $this->Description;
     }
-    public function setDescription($xdescription) {
-        $this->Description = $xdescription;
+    public function setDescription(string $xDescription) {
+        $this->Description = $xDescription;
     }
 
     public function print() {
