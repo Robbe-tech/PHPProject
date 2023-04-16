@@ -1,9 +1,18 @@
-body{
+body {
     font-family: sans-serif;
 }
 
+.wrapper{
+    width: auto;
+    min-width: 900px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
 nav {
-    position: fixed;
+    position: absolute;
     top: 0;
     width: 100%;
     transition: top, 0.3s;
@@ -11,50 +20,59 @@ nav {
     background-color: darkcyan;
 }
 
-nav ul a li {
+nav ul li a {
     float: left;
     display: block;
     font-weight: bold;
     text-align: center;
+    text-decoration: none;
     padding: 15px;
     color: white;
     border-right: black 1px solid;
+    position: relative;
 }
 
+.home {
+    border-left: black 1px solid;
+}
+
+/*
 nav ul a li img {
     background: transparent;
     height: 44px;
 }
+*/
 
-nav ul a li:hover{
+nav ul li a:hover {
     background-color: rgb(0, 117, 117);
+    text-decoration: underline;
 }
 
 .cart, .login {
     float: right;
     border-left: black 1px solid;
-    border-right: 0px;
 }
 
 .cart {
+    border-right: 0px;
     padding: 0;
     margin: 0;
 }
 
-nav:after{
+nav:after {
     content: "";
     display: block;
     clear: both;
 }
 
-header{
+header {
     width: 100%;
     height: 50%;
     background-color: darkcyan;
     text-align: center;
 }
 
-header h1{
+header h1 {
     color: white;
     font-size: xx-large;
 }
@@ -222,4 +240,10 @@ label{
     content: "";
     display: block;
     clear: both;
+}
+
+.loggedout{
+    color: black;
+    font-weight: bold;
+    text-align: center;
 }

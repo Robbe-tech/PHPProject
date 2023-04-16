@@ -10,7 +10,7 @@ class User
     private string $City;
     private string $Street;
     private int $Nr;
-    private string $Appartment;
+    private ? string $Appartment;
     private string $BirthDate;
     private bool $Admin;
 

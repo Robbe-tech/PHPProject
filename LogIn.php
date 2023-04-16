@@ -11,6 +11,7 @@ if(!isset($_SESSION['sid']))
     $_SESSION['Login'] = FALSE;
     $_SESSION['User'] = New User();
     $_SESSION['Cart'] = array();
+    $_SESSION['Attempts'] = 4;
 }
 ?>
 <!DOCTYPE html>
@@ -31,25 +32,27 @@ if(!isset($_SESSION['sid']))
     <body>
         <div class="wrapper">
             <nav>
-                <a href="Home.php">Home<</a>
-                <a href="Products.php">Products</a>
-                <?php
-                if ($_SESSION['Login']){
-                    echo '<a href="Cart.php">cart</a>';
-                }
-                if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
-                    echo '<a href="Users.php">Users</a>';
-                }
-                if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
-                    echo '<a href="AddProduct.php">Add product</a>';
-                }
-                if ($_SESSION['Login']){
-                    echo '<a href="LogOut.php">Log out</a>';
-                }
-                else{
-                    echo '<a href="LogIn.php">Log in</a>';
-                }
-                ?>
+                <ul>
+                    <li><a href="Home.php" class="home">Home</a></li>
+                    <li><a href="Products.php">Products</a></li>
+                    <?php
+                    if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
+                        echo '<li><a href="Users.php">Users</a></li>';
+                    }
+                    if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
+                        echo '<li><a href="AddProduct.php">Add product</a></li>';
+                    }
+                    if ($_SESSION['Login']){
+                        echo '<li><a href="LogOut.php" class="login">Log out</a></li>';
+                    }
+                    else{
+                        echo '<li><a href="LogIn.php" class="login">Log in</a></li>';
+                    }
+                    if ($_SESSION['Login']){
+                        echo '<li><a href="Cart.php" class="cart"><img src="Images/ShoppingCart.png" alt="Cart"></a></li>';
+                    }
+                    ?>
+                </ul>
             </nav>
             <div class="login">
                 <h1>Log in</h1>
@@ -60,55 +63,52 @@ if(!isset($_SESSION['sid']))
                     <label for="password">Password:</label><br/>
                     <input type="password" name="password" id="password"><br/>
                     <p class="fill">Both fields need to be filled</p>
-                    <p class="attempts">The user name or password was incorrect, you have 3 attempts left</p>
+                    <p class="attempts">The user name or password was incorrect, you have <p class="left">4</p> attempts left</p>
                     <input type="submit" value="Log in" name="submit">
                 </form>
                 <?php
-                $attempts = 4;
-
                 function login(){
-                    $found = FALSE;
-                    if (isset($_POST['email']) && isset($_POST['password']) && !empty($_POST['email']) && !empty($_POST['password']) && attempts > 0){
+                    if (isset($_POST['email']) && isset($_POST['password']) && !empty($_POST['email']) && !empty($_POST['password']) && $_SESSION['Attempts'] > 0){
                         $host = "localhost";
                         $user = "Webgebruiker";
-                        $passw = "Lab2021";
+                        $passw = "Lab2022";
                         $databank = "RobbeGeusens";
 
                         $email = $_POST['email'];
-                        $passw = $_POST['email'];
+                        $password = $_POST['password'];
 
                         $link = mysqli_connect($host, $user, $passw) or die("Server not available");
                         mysqli_select_db($link, $databank) or die("Database not available");
 
-                        $query = "SELECT u.FirstName, u.LastName, u.Email, u.Passwd, u.BirthDate, u.Administrator, a.PostalCode, a.City, a.Street, a.Nr";
+                        $query = "SELECT u.FirstName, u.LastName, u.Email, u.Passwd, u.Phone, u.BirthDate, u.Administrator, a.Country, a.PostalCode, a.City, a.Street, a.Nr, a.Apartment";
                         $query .=  "FROM Users AS u JOIN Addresses AS a ON u.AddressID = a.AddressID";
 
                         $result = mysqli_query($link, $query) or die("A mistake happened executing the query \"$query\"");
 
                         while ($row = mysqli_fetch_array($result)){
-                            if (strcmp($row['Email'], $email) == 0 && strcmp($row['Passwd'], $passw) == 0){
+                            if (strcmp($row['Email'], $email) == 0 && password_verify($row['Passwd'], $password)){
                                 $_SESSION['User']->setFirstName($row['FirstName']);
                                 $_SESSION['User']->setLastName($row['LastName']);
                                 $_SESSION['User']->setEmail($row['Email']);
                                 $_SESSION['User']->setPhone($row['Phone']);
+                                $_SESSION['User']->setCountry($row['Country']);
                                 $_SESSION['User']->setPostalCode($row['PostalCode']);
                                 $_SESSION['User']->setCity($row['City']);
                                 $_SESSION['User']->setStreet($row['Street']);
                                 $_SESSION['User']->setNr($row['Nr']);
+                                $_SESSION['User']->setAppartment($row['Appartment']);
                                 $_SESSION['User']->setBirthDate($row['BirthDate']);
                                 $_SESSION['User']->setAdmin($row['Admin']);
-                                $found = TRUE;
+                                $_SESSION['Login'] = TRUE;
                                 header('Location: Home.php');
                             }
                         }
-
-                        if(!found){
-                            $attempts = $attempts - 1;
-                            $str .= "<script>$(\".attempts\").text(\"The user name or password was incorrect, you have \"".$attempts."\" attempts left\")";
-                            $str .= "$(\".attempts\").show();</script>";
-                            echo $str;
-                        }
-                        echo "<script>$(\".fill\").hide();</script>";
+                        
+                        $_SESSION['Attempts'] -= 1;
+                        $str .= "<script>$(\".left\").text(\"".$_SESSION['Attempts']."\");";
+                        $str .= "$(\".attempts\").show();</script>";
+                        $str .= "<script>$(\".fill\").hide();</script>";
+                        echo $str;
                     }
                     else{
                         echo "<script>$(\".fill\").show();</script>";
@@ -120,7 +120,7 @@ if(!isset($_SESSION['sid']))
                 }
                 ?>
 
-                <a href="Register.php">Regiser</a>
+                <a href="Register.php">Register</a>
             </div>
             <footer>
                 <a href="www.thomasmore.be">&copy;Thomas More</a>
