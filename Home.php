@@ -1,7 +1,10 @@
+<!DOCTYPE html>
 <?php
-session_start();
-
 include "User.php";
+include "ProductClass.php";
+include "CartClass.php";
+
+session_start();
 
 if(!isset($_SESSION['sid']))
 {
@@ -9,9 +12,9 @@ if(!isset($_SESSION['sid']))
     $_SESSION['Login'] = FALSE;
     $_SESSION['User'] = New User();
     $_SESSION['Cart'] = array();
+    $_SESSION['Attempts'] = 4;
 }
 ?>
-<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8"/>
@@ -22,25 +25,27 @@ if(!isset($_SESSION['sid']))
     <body>
         <div class="wrapper">
             <nav>
-                <a href="Home.php">Home</a>
-                <a href="Products.php">Products</a>
-                <?php
-                if ($_SESSION['Login']){
-                    echo '<a href="Cart.php">cart</a>';
-                }
-                if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
-                    echo '<a href="Users.php">Users</a>';
-                }
-                if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
-                    echo '<a href="AddProduct.php">Add product</a>';
-                }
-                if ($_SESSION['Login']){
-                    echo '<a href="LogOut.php">Log out</a>';
-                }
-                else{
-                    echo '<a href="LogIn.php">Log in</a>';
-                }
-                ?>
+                <ul>
+                    <li><a href="Home.php" class="home">Home</a></li>
+                    <li><a href="Products.php">Products</a></li>
+                    <?php
+                    if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
+                        echo '<li><a href="Users.php">Users</a></li>';
+                    }
+                    if ($_SESSION['Login'] && $_SESSION['User']->getAdmin() == 1){
+                        echo '<li><a href="AddProduct.php">Add product</a></li>';
+                    }
+                    if ($_SESSION['Login']){
+                        echo '<li><a href="LogOut.php" class="login">Log out</a></li>';
+                    }
+                    else{
+                        echo '<li><a href="LogIn.php" class="login">Log in</a></li>';
+                    }
+                    if ($_SESSION['Login']){
+                        echo '<li><a href="Cart.php" class="cart"><img src="Images/ShoppingCart.png" alt="Cart"></a></li>';
+                    }
+                    ?>
+                </ul>
             </nav>
             <header>
                 <h1>
@@ -48,14 +53,14 @@ if(!isset($_SESSION['sid']))
                     <?php
                     if($_SESSION['Login'])
                     {
-                        $str = " ".htmlspecialchars($_SESSION['User']->getFirstName);
+                        $str = " ".htmlspecialchars($_SESSION['User']->getFirstName());
                         echo $str;
                     }
                     ?>
                 </h1>
             </header>
             <footer>
-                <a href="www.thomasmore.be">&copy;Thomas More</a>
+                <a href="https://www.thomasmore.be/">&copy;Thomas More</a>
             </footer>
         </div>
     </body>

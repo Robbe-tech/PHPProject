@@ -12,6 +12,7 @@ if(!isset($_SESSION['sid']))
     $_SESSION['Login'] = FALSE;
     $_SESSION['User'] = New User();
     $_SESSION['Cart'] = array();
+    $_SESSION['Attempts'] = 4;
 }
 ?>
 <html>
@@ -21,8 +22,9 @@ if(!isset($_SESSION['sid']))
         <link rel="stylesheet" href="Project.css"/>
         <title>Bits and bolts</title>
     </head>
-    <div class="wrapper">
-            <nav>
+    <body>
+        <div class="wrapper">
+        <nav>
                 <ul>
                     <li><a href="Home.php" class="home">Home</a></li>
                     <li><a href="Products.php">Products</a></li>
@@ -49,13 +51,13 @@ if(!isset($_SESSION['sid']))
                 <?php
                 session_start();
 
-                if(isset($_SESSION['sid'])){
+                if($_SESSION['Login']){
                     session_unset();
                     session_destroy();
                     echo "You are succesfully logged out! Bye.";
                 }
                 else{
-                    header("Location: Oef 8.php");
+                    header("Location: Home.php");
                 }
                 ?>
             </p>

@@ -36,7 +36,7 @@ CREATE TABLE Kits (
     KitPrice INT UNSIGNED NOT NULL,
     Descript TEXT,
     WeightG INT UNSIGNED NOT NULL,
-    IsKit BIT UNSIGNED NOT NULL,
+    IsKit BIT NOT NULL,
     PRIMARY KEY (KitID)
 );
 
@@ -110,7 +110,7 @@ CREATE TABLE Orders (
     DeliveryDate DATE,
     PlacedShop INT UNSIGNED,
     DeliveryAddress INT UNSIGNED NOT NULL,
-    HouseDelivery BIT UNSIGNED NOT NULL DEFAULT 0,
+    HouseDelivery BIT NOT NULL DEFAULT 0,
     DeliveryCost INT UNSIGNED,
     Payed BIT NOT NULL DEFAULT 0,
     Delivered BIT NOT NULL DEFAULT 0,

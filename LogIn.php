@@ -54,17 +54,18 @@ if(!isset($_SESSION['sid']))
                     ?>
                 </ul>
             </nav>
-            <div class="login">
-                <h1>Log in</h1>
-
-                <form action="LogIn.php" method="post">
-                    <label for="email">Email:</label><br/>
-                    <input type="email" name="email" id="email"><br/>
-                    <label for="password">Password:</label><br/>
-                    <input type="password" name="password" id="password"><br/>
-                    <p class="fill">Both fields need to be filled</p>
-                    <p class="attempts">The user name or password was incorrect, you have <p class="left">4</p> attempts left</p>
-                    <input type="submit" value="Log in" name="submit">
+                <form action="LogIn.php" method="post" class="form">
+                    <fieldset>
+                        <legend>Log in</legend>
+                        <br/><label for="email">Email:</label>
+                        <input type="email" name="email" id="email"><br/><br/>
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password"><br/>
+                        <p class="fill">Both fields need to be filled</p>
+                        <p class="attempts">The user name or password was incorrect, you have 4 attempts left</p><br>
+                        <br/><input type="submit" value="Log in" name="submit"><br/><br/>
+                        <a href="Register.php" id="register">Register</a>
+                    </fieldset>
                 </form>
                 <?php
                 function login(){
@@ -81,11 +82,14 @@ if(!isset($_SESSION['sid']))
                         mysqli_select_db($link, $databank) or die("Database not available");
 
                         $query = "SELECT u.FirstName, u.LastName, u.Email, u.Passwd, u.Phone, u.BirthDate, u.Administrator, a.Country, a.PostalCode, a.City, a.Street, a.Nr, a.Apartment";
-                        $query .=  "FROM Users AS u JOIN Addresses AS a ON u.AddressID = a.AddressID";
+                        $query .=  "FROM Users AS u JOIN Addresses AS a ON u.AddressID = a.AddressID WHERE u.Email = ?";
 
-                        $result = mysqli_query($link, $query) or die("A mistake happened executing the query \"$query\"");
+                        $stmt = $link->prepare($query);
+                        $stmt->bind_param("s", $email);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        while ($row = mysqli_fetch_array($result)){
+                        while ($row = $result->fetch_assoc()){
                             if (strcmp($row['Email'], $email) == 0 && password_verify($row['Passwd'], $password)){
                                 $_SESSION['User']->setFirstName($row['FirstName']);
                                 $_SESSION['User']->setLastName($row['LastName']);
@@ -105,13 +109,15 @@ if(!isset($_SESSION['sid']))
                         }
                         
                         $_SESSION['Attempts'] -= 1;
-                        $str .= "<script>$(\".left\").text(\"".$_SESSION['Attempts']."\");";
+                        $str .= "<script>$(\".left\").text(\"The user name or password was incorrect, you have ".$_SESSION['Attempts']."\" attempts left);";
                         $str .= "$(\".attempts\").show();</script>";
                         $str .= "<script>$(\".fill\").hide();</script>";
                         echo $str;
                     }
                     else{
-                        echo "<script>$(\".fill\").show();</script>";
+                        $str .= "$(\".fill\").show();</script>";
+                        $str .= "<script>$(\".attempts\").hide();</script>";
+                        echo $str;
                     }
                 }
 
@@ -119,11 +125,8 @@ if(!isset($_SESSION['sid']))
                     login();
                 }
                 ?>
-
-                <a href="Register.php">Register</a>
-            </div>
             <footer>
-                <a href="www.thomasmore.be">&copy;Thomas More</a>
+                <a href="https://www.thomasmore.be/">&copy;Thomas More</a>
             </footer>
         </div>
     </body>
