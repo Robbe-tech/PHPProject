@@ -1,17 +1,9 @@
 <?php
-$host = "localhost";
-$user = "Webgebruiker";
-$passw = "Lab2021";
-$databank = "RobbeGeusens";
-
-include "ProductClass.php";
+include("ProductClass.php");
+include("Connect.php");
 
 $prevwhere = FALSE;
-$prev = FALSE;
-$price = FALSE;
-$weight = FALSE;
 $type = FALSE;
-$diameter = FALSE;
 $kit = FALSE;
 $resizable = FALSE;
 $electrical = FALSE;
@@ -27,667 +19,691 @@ $highprice = $_POST['highprice'];
 $minweight = $_POST['minweight'];
 $maxweight = $_POST['maxweight'];
 
-$bolt = $_POST['bolt'];
-$nut = $_POST['nut'];
-$wrench = $_POST['wrench'];
-$screw = $_POST['screw'];
-$screwdriver = $_POST['screwdriver'];
-$spike = $_POST['spike'];
-$hammer = $_POST['hammer'];
-$drill = $_POST['drill'];
-$drillbit = $_POST['drillbit'];
+$bolt = $_POST['bolt'] === "true"? true: false;
+$nut = $_POST['nut'] === "true"? true: false;
+$wrench = $_POST['wrench'] === "true"? true: false;
+$screw = $_POST['screw'] === "true"? true: false;
+$screwdriver = $_POST['screwdriver'] === "true"? true: false;
+$spike = $_POST['spike'] === "true"? true: false;
+$hammer = $_POST['hammer'] === "true"? true: false;
+$drill = $_POST['drill'] === "true"? true: false;
+$drillbit = $_POST['drillbit'] === "true"? true: false;
 
 $mindiameter = $_POST['mindiameter'];
 $maxdiameter = $_POST['maxdiameter'];
 
-$iskit = $_POST['iskit'];
-$notkit = $_POST['notkit'];
+$iskit = $_POST['iskit'] === "true"? true: false;
+$notkit = $_POST['notkit'] === "true"? true: false;
 
-$isresizable = $_POST['isresizable'];
-$notresizable = $_POST['notresizable'];
+$isresizable = $_POST['isresizable'] === "true"? true: false;
+$notresizable = $_POST['notresizable'] === "true"? true: false;
 
-$iselectrical = $_POST['iselectrical'];
-$notelectrical = $_POST['notelectrical'];
+$iselectrical = $_POST['iselectrical'] === "true"? true: false;
+$notelectrical = $_POST['notelectrical'] === "true"? true: false;
 
-$slottedhead = $_POST['slottedhead'];
-$phillipshead = $_POST['phillipshead'];
-$mixedhead = $_POST['mixedhead'];
-$triwinghead = $_POST['triwinghead'];
-$allensechead = $_POST['allensechead'];
-$torxsechead = $_POST['torxsechead'];
-$squarehead = $_POST['squarehead'];
-$pozidrivhead = $_POST['pozidrivhead'];
-$allenhead = $_POST['allenhead'];
-$clutchhead = $_POST['clutchhead'];
-$torxhead = $_POST['torxhead'];
-$spannerhead = $_POST['spannerhead'];
-$schraderhead = $_POST['schraderhead'];
+$slottedhead = $_POST['slottedhead'] === "true"? true: false;
+$phillipshead = $_POST['phillipshead'] === "true"? true: false;
+$mixedhead = $_POST['mixedhead'] === "true"? true: false;
+$triwinghead = $_POST['triwinghead'] === "true"? true: false;
+$allensechead = $_POST['allensechead'] === "true"? true: false;
+$torxsechead = $_POST['torxsechead'] === "true"? true: false;
+$squarehead = $_POST['squarehead'] === "true"? true: false;
+$pozidrivhead = $_POST['pozidrivhead'] === "true"? true: false;
+$allenhead = $_POST['allenhead'] === "true"? true: false;
+$clutchhead = $_POST['clutchhead'] === "true"? true: false;
+$torxhead = $_POST['torxhead'] === "true"? true: false;
+$spannerhead = $_POST['spannerhead'] === "true"? true: false;
+$schraderhead = $_POST['schraderhead'] === "true"? true: false;
 
 $filter = $_POST['filter'];
 
-$link = mysqli_connect($host, $user, $passw) or die("Server not available");
-mysqli_select_db($link, $databank) or die("Database not available");
+$prep = "";
+$extraprep = "";
+$values = [];
+$extravalues = [];
 
-$query = "SELECT k.KitID AS ID, i.Link AS Link, k.KitName AS KitName, k.KitPrice AS Price, k.Descript AS Descript, MIN(FLOOR(p.Stock / kp.Quantity)) AS Stock";
-$query .= " FROM Heads AS h JOIN Products AS p ON h.ProductID = p.ProductID JOIN KitProducts AS kp ON p.ProductID = kp.ProductID";
-$query .= " JOIN Kits AS k ON kp.KitID = k.KitID JOIN Images AS i ON k.KitID = i.KitID";
+$query = "SELECT k.KitID AS ID, i.Link AS Link, k.KitName AS KitName, k.KitPrice AS KitPrice, k.Descript AS Descript, MIN(FLOOR(p.Stock / kp.Quantity)) AS Stock";
+$query .= " FROM Heads h JOIN Products p ON h.ProductID = p.ProductID JOIN KitProducts kp ON p.ProductID = kp.ProductID";
+$query .= " JOIN Kits k ON kp.KitID = k.KitID JOIN Images i ON k.KitID = i.KitID";
 
+$where = "";
+$extrawhere = "";
+
+if(isset($name) && !empty($name)) {
+    $name = "%".$name."%";
+    $where .= " WHERE (k.KitName LIKE ? OR p.ProductName LIKE ?)";
+    $prevwhere= TRUE;
+    $prep .= "ss";
+    array_push($values, $name, $name);
+}
+
+if(isset($manufacturer) && !empty($manufacturer)) {
+    if ($prevwhere) {
+        $manufacturer = "%".$manufacturer."%";
+        $where .= " AND p.Manufacturer LIKE ?";
+    }
+    else {
+        $manufacturer = "%".$manufacturer."%";
+        $where .= " WHERE p.Manufacturer LIKE ?";
+        $prevwhere = TRUE;
+    }
+    $prep .= "s";
+    array_push($values, $manufacturer);
+}
+
+if($bolt) {
+    if($prevwhere) {
+        $where .= " AND (p.ProductType = 'b'";
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'b'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($nut) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'n'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'n'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'n'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($wrench) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'w'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'w'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'w'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($screw) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 's'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 's'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 's'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+
+if($screwdriver) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'c'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'c'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'c'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($spike) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'p'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'p'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'p'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($hammer) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'h'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'h'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'h'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($drill) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'd'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'd'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'd'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if($drillbit) {
+    if($prevwhere) {
+        if ($type) {
+            $where .= " OR p.ProductType = 'r'";
+        }
+        else {
+            $where .= " AND (p.ProductType = 'r'";
+        }
+    }
+    else {
+        $where .= " WHERE (p.ProductType = 'r'";
+        $prevwhere = TRUE;
+    }
+    $type = TRUE;
+}
+
+if ($type) {
+    $where .= ")";
+}
+
+if ($isresizable) {
+    if($prevwhere){
+        $where .= " AND (p.Resizable = 1";
+    }
+    else {
+        $where .= " WHERE (p.Resizable = 1";
+        $prevwhere = TRUE;
+    }
+    $resizable = TRUE;
+}
+
+if ($notresizable) {
+    if($prevwhere){
+        if ($resizable) {
+            $where .= " OR p.Resizable = 0";
+        }
+        else {
+            $where .= " AND (p.Resizable = 0";
+        }
+    }
+    else {
+        $where .= " WHERE (p.Resizable = 0";
+        $prevwhere = TRUE;
+    }
+    $resizable = TRUE;
+}
+
+if ($resizable) {
+    $where .= ")";
+}
+
+if ($iselectrical) {
+    if($prevwhere){
+        $where .= " AND (p.Electrical = 1";
+    }
+    else {
+        $where .= " WHERE (p.Electrical = 1";
+        $prevwhere = TRUE;
+    }
+    $electrical = TRUE;
+}
+
+if ($notelectrical) {
+    if($prevwhere){
+        if ($electrical) {
+            $where .= " OR p.Electrical = 0";
+        }
+        else {
+            $where .= " AND (p.Electrical = 0";
+        }
+    }
+    else {
+        $where .= " WHERE (p.Electrical = 0";
+        $prevwhere = TRUE;
+    }
+    $electrical = TRUE;
+}
+
+if ($electrical) {
+    $where .= ")";
+}
+
+if($slottedhead) {
+    if($prevwhere) {
+        $where .= " AND (h.HeadType = 's'";
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 's'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($phillipshead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'p'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'p'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'p'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($mixedhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'm'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'm'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'm'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($triwinghead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 't'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 't'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 't'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+
+if($allensechead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'a'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'a'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'a'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($torxsechead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'o'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'o'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'o'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($squarehead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'q'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'q'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'q'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($pozidrivhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'z'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'z'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'z'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($allenhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'l'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'l'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'l'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($clutchhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'c'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'c'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'c'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($torxhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'r'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'r'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'r'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($spannerhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'n'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'n'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'n'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+if($schraderhead) {
+    if($prevwhere) {
+        if ($head) {
+            $where .= " OR h.HeadType = 'h'";
+        }
+        else {
+            $where .= " AND (h.HeadType = 'h'";
+        }
+    }
+    else {
+        $where .= " WHERE (h.HeadType = 'h'";
+        $prevwhere = TRUE;
+    }
+    $head = TRUE;
+}
+
+#if you don't have a head
+if ($head) {
+    $where .= " OR h.HeadType = NULL)";
+}
+
+if ($iskit) {
+    if($prevwhere){
+        $where .= " AND (k.IsKit = 1";
+    }
+    else {
+        $where .= " WHERE (k.IsKit = 1";
+        $prevwhere = TRUE;
+    }
+    $kit = TRUE;
+}
+
+if ($notkit) {
+    if($prevwhere){
+        if ($kit) {
+            $where .= " OR k.IsKit = 0";
+        }
+        else {
+            $where .= " AND (k.IsKit = 0";
+        }
+    }
+    else {
+        $where .= " WHERE (k.IsKit = 0";
+        $prevwhere = TRUE;
+    }
+    $kit = TRUE;
+}
+
+if ($kit) {
+    $where .= ")";
+}
+
+#extra so it won't affect extremes
 if (isset($lowprice) && !empty($lowprice)) {
-    $query .= " WHERE (k.KitPrice >= ".$lowprice;
-    $prevwhere = TRUE;
-    $price = TRUE;
+    if ($prevwhere){
+        $extrawhere .= " AND k.KitPrice >= ?";
+    }
+    else{
+        $extrawhere .= " WHERE k.KitPrice >= ?";
+        $prevwhere = TRUE;
+    }
+    $extraprep .= "i";
+    array_push($extravalues, $lowprice);
 }
 
 if (isset($highprice) && !empty($highprice)) {
     if ($prevwhere) {
-        if ($price) {
-            $query .= " OR k.KitPrice <= ".$highprice;
-        }
-        else {
-            $query .= " AND (k.KitPrice <= ".$highprice;
-            $price = TRUE;
-        }
+        $extrawhere .= " AND k.KitPrice <= ?";
     }
     else {
-        $query .= " WHERE (k.KitPrice <= ".$highprice;
+        $extrawhere .= " WHERE k.KitPrice <= ?";
         $prevwhere = TRUE;
-        $price = TRUE;
     }
-}
-
-if ($price) {
-    $query .= ")";
-}
-
-if (isset($iskit)) {
-    if($prevwhere){
-        $query .= " AND (k.IsKit = 1";
-        $kit = TRUE;
-    }
-    else {
-        $query .= " WHERE (k.IsKit = 1";
-        $prevwhere = TRUE;
-        $kit = TRUE;
-    }
-}
-
-if (isset($notkit)) {
-    if($prevwhere){
-        if ($kit) {
-            $query .= " OR k.IsKit = 0";
-        }
-        else {
-            $query .= " AND (k.IsKit = 0";
-            $kit = TRUE;
-        }
-    }
-    else {
-        $query .= " WHERE (k.IsKit = 0";
-        $prevwhere = TRUE;
-        $kit = TRUE;
-    }
-}
-
-if ($kit) {
-    $query .= ")";
-}
-
-$query .= " GROUP BY k.KitID";
-
-if(isset($name) && !empty($name)) {
-    $search = mysqli_real_escape_string($link, htmlspecialchars($name));
-    $query .= " HAVING (k.Name LIKE '%".$search."%' OR p.Name LIKE '%".$search."%')";
-    $prev = TRUE;
-}
-
-if(isset($manufacturer) && !empty($manufacturer)) {
-    if ($prev) {
-        $search = mysqli_real_escape_string($link, htmlspecialchars($manufacturer));
-        $query .= " AND h.manufacturer LIKE '%".$search."%'";
-    }
-    else {
-        $search = mysqli_real_escape_string($link, htmlspecialchars($manufacturer));
-        $query .= " HAVING h.manufacturer LIKE '%".$search."%'";
-        $prev = TRUE;
-    }
+    $extraprep .= "i";
+    array_push($extravalues, $highprice);
 }
 
 if (isset($minweight) && !empty($minweight)) {
-    if($prev){
-        $query .= " AND (p.weight >= ".$minweight;
-        $weight = TRUE;
+    if($prevwhere){
+        $extrawhere .= " AND k.WeightG >= ?";
     }
     else {
-        $query .= " HAVING (p.weight >= ".$minweight;
-        $prev = TRUE;
-        $weight = TRUE;
+        $extrawhere .= " WHERE k.WeightG >= ?";
+        $prevwhere = TRUE;
     }
+    $weight = TRUE;
+    $extraprep .= "i";
+    array_push($extravalues, $minweight);
 }
 
 if (isset($maxweight) && !empty($maxweight)) {
-    if($prev){
-        if ($weight) {
-            $query .= " OR p.weight <= ".$maxweight;
-        }
-        else {
-            $query .= " AND (p.weight <= ".$maxweight;
-            $weight = TRUE;
-        }
+    if($prevwhere){
+        $extrawhere .= " AND k.WeightG <= ?";
     }
     else {
-        $query .= " HAVING (p.weight <= ".$maxweight;
-        $prev = TRUE;
-        $weight = TRUE;
+        $extrawhere .= " WHERE k.WeightG <= ?";
+        $prevwhere = TRUE;
     }
-}
-
-if ($weight) {
-    $query .= ")";
-}
-
-if(isset($bolt)) {
-    if($prev) {
-        $query .= " AND (h.ProductType = 'b'";
-        $type = TRUE;
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'b'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($nut)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 'n'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'n'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'n'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($wrench)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 'w'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'w'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'w'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($screw)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 's'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 's'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 's'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-
-if(isset($screwdriver)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 'c'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'c'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'c'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($spike)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType 'p'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'p'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'p'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($hammer)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 'h'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'h'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'h'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($drill)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 'd'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'd'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'd'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if(isset($drillbit)) {
-    if($prev) {
-        if ($type) {
-            $query .= " OR h.ProductType = 'r'";
-        }
-        else {
-            $query .= " AND (h.ProductType = 'r'";
-            $type = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.ProductType = 'r'";
-        $prev = TRUE;
-        $type = TRUE;
-    }
-}
-
-if ($type) {
-    $query .= ")";
+    $weight = TRUE;
+    $extraprep .= "i";
+    array_push($extravalues, $maxweight);
 }
 
 if (isset($mindiameter) && !empty($mindiameter)) {
-    if($prev){
-        $query .= " AND (h.Diameter >= ".$mindiameter;
-        $diameter = TRUE;
+    if($prevwhere){
+        $extrawhere .= " AND h.Diameter >= ".$mindiameter;
     }
     else {
-        $query .= " HAVING (h.Diameter >= ".$mindiameter;
-        $prev = TRUE;
-        $diameter = TRUE;
+        $extrawhere .= " WHERE h.Diameter >= ".$mindiameter;
+        $prevwhere = TRUE;
     }
+    $extraprep .= "i";
+    array_push($extravalues, $mindiameter);
 }
 
 if (isset($maxdiameter) && !empty($maxdiameter)) {
-    if($prev){
-        if ($diameter) {
-            $query .= " OR h.Diameter <= ".$maxdiameter;
-        }
-        else {
-            $query .= " AND (h.Diameter <= ".$maxdiameter;
-            $diameter = TRUE;
-        }
+    if($prevwhere){
+        $extrawhere .= " AND h.Diameter <= ".$maxdiameter;
     }
     else {
-        $query .= " HAVING (h.Diameter <= ".$maxdiameter;
-        $prev = TRUE;
-        $diameter = TRUE;
+        $extrawhere .= " WHERE h.Diameter <= ".$maxdiameter;
+        $prevwhere = TRUE;
     }
+    $extraprep .= "i";
+    array_push($extravalues, $maxdiameter);
 }
 
-if ($diameter) {
-    $query .= ")";
-}
+$query .= $where.$extrawhere." GROUP BY k.KitID";
 
-if (isset($isresizable)) {
-    if($prev){
-        $query .= " AND (p.Resizable = 1";
-        $resizable = TRUE;
+if ($filter !== "default") {
+    if ($filter === "a-z") {
+        $query .= " ORDER BY k.KitName ASC";
     }
-    else {
-        $query .= " HAVING (p.Resizable = 1";
-        $prev = TRUE;
-        $resizable = TRUE;
+    if ($filter === "z-a") {
+        $query .= " ORDER BY k.KitName DESC";
     }
-}
-
-if (isset($notresizable)) {
-    if($prev){
-        if ($resizable) {
-            $query .= " OR p.Resizable = 0";
-        }
-        else {
-            $query .= " AND (p.Resizable = 0";
-            $resizable = TRUE;
-        }
+    if ($filter === "low-high") {
+        $query .= " ORDER BY k.KitPrice ASC";
     }
-    else {
-        $query .= " HAVING (p.Resizable = 0";
-        $prev = TRUE;
-        $resizable = TRUE;
+    if ($filter === "high-low") {
+        $query .= " ORDER BY k.KitPrice DESC";
     }
 }
+$query.=";";
 
-if ($resizable) {
-    $query .= ")";
+$extremes = "SELECT MIN(k.KitPrice) AS MinPrice, MAX(k.KitPrice) AS MaxPrice, MIN(k.WeightG) AS MinWeight, MAX(k.WeightG) AS MaxWeight, MIN(h.Diameter) AS MinDia, MAX(h.Diameter) AS MaxDia";
+$extremes .= " FROM Heads h JOIN Products p ON h.ProductID = p.ProductID JOIN KitProducts kp ON p.ProductID = kp.ProductID";
+$extremes .= " JOIN Kits k ON kp.KitID = k.KitID JOIN Images i ON k.KitID = i.KitID".$where.";";
+
+$stmt = $link->prepare($extremes);
+if(strlen($prep) > 0){
+    $stmt->bind_param($prep, ...$values);
 }
+$stmt->execute();
+$result = $stmt->get_result();
 
-if (isset($iselectrical)) {
-    if($prev){
-        $query .= " AND (p.Electrical = 1";
-        $electrical = TRUE;
-    }
-    else {
-        $query .= " HAVING (p.Electrical = 1";
-        $prev = TRUE;
-        $electrical = TRUE;
-    }
+$row = $result->fetch_assoc();
+$str = "<script>";
+    $str .= "$(document).ready(function(){";
+        $str .= "$(\".priceValue\").attr({";
+            $str .= "\"max\": ".$row['MinPrice'].",";
+            $str .= "\"min\": ".$row['MaxPrice'];
+        $str .= "});";
+        $str .= "$(\".weightValue\").attr({";
+            $str .= "\"max\": ".$row['MinWeight'].",";
+            $str .= "\"min\": ".$row['MaxWeight'];
+        $str .= "});";
+        $str .= "$(\".diameterValue\").attr({";
+            $str .= "\"max\": ".$row['MinDia'].",";
+            $str .= "\"min\": ".$row['MaxDia'];
+        $str .= "});";
+    $str .= "});";
+$str .= "</script>";
+echo $str;
+
+$prep .= $extraprep;
+$values = array_merge($values, $extravalues);
+
+#get products
+$stmt = $link->prepare($query);
+if(strlen($prep) > 0){
+    $stmt->bind_param($prep, ...$values);
 }
+$stmt->execute();
+$result = $stmt->get_result();
 
-if (isset($notelectrical)) {
-    if($prev){
-        if ($electrical) {
-            $query .= " OR p.Electrical = 0";
-        }
-        else {
-            $query .= " AND (p.Electrical = 0";
-            $electrical = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (p.Electrical = 0";
-        $prev = TRUE;
-        $electrical = TRUE;
-    }
-}
-
-if ($electrical) {
-    $query .= ")";
-}
-
-if(isset($slottedhead)) {
-    if($prev) {
-        $query .= " AND (h.HeadType = 's'";
-        $head = TRUE;
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 's'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($phillipshead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'p'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'p'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'p'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($mixedhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'm'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'm'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'm'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($triwinghead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 't'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 't'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 't'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-
-if(isset($allensechead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'a'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'a'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'a'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($torxsechead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'o'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'o'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'o'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($squarehead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'q'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'q'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'q'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($pozidrivhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'z'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'z'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'z'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($allenhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.headtyp = 'l'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'l'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'l'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($clutchhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'c'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'c'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'c'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($torxhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'r'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'r'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'r'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($spannerhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'n'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'n'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'n'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if(isset($schraderhead)) {
-    if($prev) {
-        if ($head) {
-            $query .= " OR h.HeadType = 'h'";
-        }
-        else {
-            $query .= " AND (h.HeadType = 'h'";
-            $head = TRUE;
-        }
-    }
-    else {
-        $query .= " HAVING (h.HeadType = 'h'";
-        $prev = TRUE;
-        $head = TRUE;
-    }
-}
-
-if ($head) {
-    $query .= " OR h.Headtype = NULL)";
-}
-
-if (!(strcmp($order, "default") == 0)) {
-    if (strcmp($order, "a-z") == 0) {
-        $query .= " ORDER BY k.KitName ASCENDING";
-    }
-    if (strcmp($order, "z-a") == 0) {
-        $query .= " ORDER BY k.KitName DESCENDING";
-    }
-    if (strcmp($order, "low-high") == 0) {
-        $query .= " ORDER BY k.KitPrice ASCENDING";
-    }
-    if (strcmp($order, "high-low") == 0) {
-        $query .= " ORDER BY k.KitPrice DESCENDING";
-    }
-}
-
-$result = mysqli_query($link, $query) or die("A mistake happened executing the query \"$query\"");
-
-while ($row = mysqli_fetch_array($result)){
-    $product = new Product($row['Link'], $row['KitName'], $row['KitPrice'], $row['Descript']);
-    echo "<a href=\"Product.php?id=".$row['ID'].">\">div class=\"product\">";
+#show products
+while ($row = $result->fetch_assoc()){
+    $product = new Product($row['ID'], $row['Link'], $row['KitName'], $row['KitPrice'], $row['Descript']);
+    $id = $row['ID'];
+    $stock = $row['Stock'];
+    echo "<div id=\"product\">";
     $product->print();
-    $str = "<p class=\"warning\" id=\"few\">This product only has ".$row['Stock']." left</p>";
-    $str .= "<p class=\"warning\" id=\"out\">This product is currently out of stock</p>";
-    $str .= "<p class=\"warning\" id=\"large\">You have entered a larger ammount than is currently in our stock. Currently left:".$row['Stock']."</p>";
-    $str .= "<form method=\"post\">";
-    $str .= "<input type=\"button\" value=\"-\" id=\"minus\" onclick=\"minus()\"/>";
-    $str .= "<input type=\"number\" value=\"0\" name=\"ammount\" id=\"ammount\" min=\"0\" max=\"".$row['Stock']."\"/>";
-    $str .= "<input type=\"button\" value=\"+\" id=\"plus\"/>";
-    $str .= "<button id=\"addcart\" onclick=\"addtocart(".$row['ID'].", ".$row['Stock'].")\">Add to kart <img src=\"Images/ShoppingCart.png\"/></button>";
+    $str = "<p class=\"warning\" id=\"few".$id."\">This product only has ".$stock." left</p>";
+    $str .= "<p class=\"warning\" id=\"out".$id."\">This product is currently out of stock</p>";
+    $str .= "<p class=\"warning\" id=\"large".$id."\">You have entered a larger ammount than is currently in our stock. Currently left:".$stock."</p>";
+    $str .= "<form>";
+    $str .= "<input type=\"button\" value=\"-\" id=\"minus".$id."\" onclick=\"minus(".$id.")\"/>";
+    $str .= "<input type=\"number\" value=\"0\" name=\"ammount".$id."\" id=\"ammount".$id."\" min=\"0\" max=\"".$stock."\"/>";
+    $str .= "<input type=\"button\" value=\"+\" id=\"plus".$id."\" onclick=\"plus(".$id.", ".$stock.")\"/>";
+    $str .= "<button class=\"addcart\" id=\"addcart".$id."\" onclick=\"addtocart(".$id.", ".$stock.")\">Add to cart <img src=\"Images/ShoppingCart.png\"/></button>";
     $str .= "</form>";
-    $str .= "</div></a>";
+    $str .= "</div>";
+    $str .= "<script>";
+        $str .= "$(document).ready(function(){";
+            $str .= "$(\"#minus".$id."\").attr(\"disabled\", true);";
+            $str .= "$(\"#large".$id."\").css(\"bottom\", \"75px\");";
+        if ($stock === 0){
+            $str .= "$(\"#out".$id."\").show();";
+            $str .= "$(\"#plus".$id."\").attr(\"disabled\", true);";
+            $str .= "$(\"#addcart".$id."\").attr(\"disabled\", true);";
+        }
+        else{
+            if ($stock <= 10){
+                $str .= "$(\"#few".$id."\").show();";
+            }
+        }
+        $str .= "});";
+    $str .= "</script>";
+    echo $str;
 }
 ?>

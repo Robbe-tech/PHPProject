@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<?php
-include "Session.php";
-?>
 <html>
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
         <link rel="stylesheet" href="Project.css"/>
-        <title>Bits and bolts</title>
+        <title>Header</title>
     </head>
     <body>
         <div class="wrapper">
@@ -34,21 +30,6 @@ include "Session.php";
                     ?>
                 </ul>
             </nav>
-            <header>
-                <h1>
-                    Welcome
-                    <?php
-                    if($_SESSION['Login'])
-                    {
-                        $str = " ".htmlspecialchars($_SESSION['User']->getFirstName());
-                        echo $str;
-                    }
-                    ?>
-                </h1>
-            </header>
-            <footer>
-                <a href="https://www.thomasmore.be/">&copy;Thomas More</a>
-            </footer>
         </div>
     </body>
 </html>

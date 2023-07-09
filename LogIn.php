@@ -1,20 +1,7 @@
-<?php
-include "User.php";
-include "ProductClass.php";
-include "CartClass.php";
-
-session_start();
-
-if(!isset($_SESSION['sid']))
-{
-    $_SESSION['sid'] = session_id();
-    $_SESSION['Login'] = FALSE;
-    $_SESSION['User'] = New User();
-    $_SESSION['Cart'] = array();
-    $_SESSION['Attempts'] = 4;
-}
-?>
 <!DOCTYPE html>
+<?php
+include "Session.php";
+?>
 <html>
     <head>
         <meta charset="utf-8"/>
@@ -70,19 +57,13 @@ if(!isset($_SESSION['sid']))
                 <?php
                 function login(){
                     if (isset($_POST['email']) && isset($_POST['password']) && !empty($_POST['email']) && !empty($_POST['password']) && $_SESSION['Attempts'] > 0){
-                        $host = "localhost";
-                        $user = "Webgebruiker";
-                        $passw = "Lab2022";
-                        $databank = "RobbeGeusens";
+                        include("Connect.php");
 
                         $email = $_POST['email'];
                         $password = $_POST['password'];
 
-                        $link = mysqli_connect($host, $user, $passw) or die("Server not available");
-                        mysqli_select_db($link, $databank) or die("Database not available");
-
-                        $query = "SELECT u.FirstName, u.LastName, u.Email, u.Passwd, u.Phone, u.BirthDate, u.Administrator, a.Country, a.PostalCode, a.City, a.Street, a.Nr, a.Apartment";
-                        $query .=  "FROM Users AS u JOIN Addresses AS a ON u.AddressID = a.AddressID WHERE u.Email = ?";
+                        $query = "SELECT u.FirstName AS FirstName, u.LastName AS LastName, u.Email AS Email, u.Passwd AS Passwd, u.Phone AS Phone, u.BirthDate AS BirthDate, u.Administrator AS Administrator, a.Country AS Country, a.PostalCode AS PostalCode, a.City AS City, a.Street AS Street, a.Nr AS Nr, a.Appartment AS Appartment";
+                        $query .=  " FROM Users u JOIN Addresses a ON u.AddressID = a.AddressID WHERE u.Email = ?";
 
                         $stmt = $link->prepare($query);
                         $stmt->bind_param("s", $email);
@@ -90,7 +71,7 @@ if(!isset($_SESSION['sid']))
                         $result = $stmt->get_result();
 
                         while ($row = $result->fetch_assoc()){
-                            if (strcmp($row['Email'], $email) == 0 && password_verify($row['Passwd'], $password)){
+                            if (password_verify($password, $row['Passwd'])){
                                 $_SESSION['User']->setFirstName($row['FirstName']);
                                 $_SESSION['User']->setLastName($row['LastName']);
                                 $_SESSION['User']->setEmail($row['Email']);
@@ -109,15 +90,26 @@ if(!isset($_SESSION['sid']))
                         }
                         
                         $_SESSION['Attempts'] -= 1;
-                        $str .= "<script>$(\".left\").text(\"The user name or password was incorrect, you have ".$_SESSION['Attempts']."\" attempts left);";
-                        $str .= "$(\".attempts\").show();</script>";
-                        $str .= "<script>$(\".fill\").hide();</script>";
+                        $str = "<script>$(document).ready(function{";
+                        $str .= "$(\".left\").text(\"The user name or password was incorrect, you have ".$_SESSION['Attempts']."\" attempts left);";
+                        $str .= "$(\".attempts\").show();";
+                        $str .= "$(\".fill\").hide();});</script>";
                         echo $str;
                     }
                     else{
-                        $str .= "$(\".fill\").show();</script>";
-                        $str .= "<script>$(\".attempts\").hide();</script>";
-                        echo $str;
+                        if ($_SESSION['Attempts'] === 0){
+                            $str = "<script>$(document).ready(function{";
+                                $str .= "$(\".left\").text(\"The user name or password was incorrect, you have ".$_SESSION['Attempts']."\" attempts left);";
+                                $str .= "$(\".attempts\").show();";
+                                $str .= "$(\".fill\").hide();});</script>";
+                                echo $str;
+                        }
+                        else{
+                            $str = "<script>$(document).ready(function{";
+                            $str .= "$(\".fill\").show();";
+                            $str .= "$(\".attempts\").hide();});</script>";
+                            echo $str;
+                        }
                     }
                 }
 

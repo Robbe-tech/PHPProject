@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <?php
-include "User.php";
-include "ProductClass.php";
-include "CartClass.php";
-
-session_start();
-
-if(!isset($_SESSION['sid']))
-{
-    $_SESSION['sid'] = session_id();
-    $_SESSION['Login'] = FALSE;
-    $_SESSION['User'] = New User();
-    $_SESSION['Cart'] = array();
-    $_SESSION['Attempts'] = 4;
-}
+include "Session.php";
 ?>
 <html>
     <head>
@@ -91,88 +78,101 @@ if(!isset($_SESSION['sid']))
                 </fieldset>
             </form>
             <?php
+            function searchaddress(&$afound, $link, $appartment){
+                $aid = NULL;
+
+                if ($appartment === NULL){
+                    $query = "SELECT AddressID FROM Addresses WHERE Country = ? AND PostalCode = ? AND City = ? AND Street = ? AND Nr = ?";
+                    $stmt = $link->prepare($query);
+                    $stmt->bind_param('sissi', $_POST['country'], $_POST['postalcode'], $_POST['city'], $_POST['street'], $_POST['number']);
+                }
+                else{
+                    $query = "SELECT AddressID FROM Addresses WHERE Country = ? AND PostalCode = ? AND City = ? AND Street = ? AND Nr = ? AND Appartment = ?";
+                    $stmt = $link->prepare($query);
+                    $stmt->bind_param('sissis', $_POST['country'], $_POST['postalcode'], $_POST['city'], $_POST['street'], $_POST['number'], $appartment);
+                }
+
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0){
+                    $afound = TRUE;
+                    $row = $result->fetch_assoc();
+                    $aid = $row['AddressID'];
+                }
+
+                return $aid;
+            }
+
             if (isset($_POST['register'])){
-                echo "bruhs";
                 if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['phone']) && isset($_POST['birthdate']) && isset($_POST['country']) && isset($_POST['postalcode']) && isset($_POST['city']) && isset($_POST['street']) && isset($_POST['number']) && isset($_POST['password']) && isset($_POST['vpassword']) && !empty($_POST['firstname']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['phone']) && !empty($_POST['birthdate']) && !empty($_POST['country']) && !empty($_POST['postalcode']) && !empty($_POST['city']) && !empty($_POST['street']) && !empty($_POST['number']) && !empty($_POST['password']) && !empty($_POST['vpassword'])){
                     if($_POST['password'] == $_POST['vpassword']){
-                        $host = "localhost";
-                        $user = "Webgebruiker";
-                        $passw = "Lab2022";
-                        $databank = "RobbeGeusens";
+                        include("Connect.php");
 
                         $email = $_POST['email'];
                         $found = FALSE;
 
-                        $link = mysqli_connect($host, $user, $passw) or die("Server not available");
-                        mysqli_select_db($link, $databank) or die("Database not available");
+                        $query = "SELECT Email FROM Users WHERE Email = ?";
+                        $stmt = $link->prepare($query);
+                        $stmt->bind_param("s", $email);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        $query = "SELECT Email FROM Users";
-                        $result = mysqli_query($link, $query) or die("A mistake happened executing the query \"$query\"");
-
-                        while ($row = mysqli_fetch_array($result) && !$found){
-                            if (strcmp($row['Email'], $email) == 0){
-                                $found = TRUE;
-                            }
+                        if ($result->num_rows > 0){
+                            $found = TRUE;
                         }
 
                         if($found){
-                            $str = "<script>$(\".passverification\").hide();";
-                            $str .= "$(\".fill\").hide()";
-                            $str .= "$(\".exists\").show();</script>";
+                            $str = "<script>$(document).ready(function(){";
+                            $str .= "$(\".passverification\").hide();";
+                            $str .= "$(\".fill\").hide();";
+                            $str .= "$(\".exists\").show();});</script>";
                             echo $str;
                         }
                         else{
                             $aid;
                             $afound = FALSE;
 
-                            $query = "SELECT * FROM Addresses";
-                            $result = mysqli_query($link, $query) or die("A mistake happened executing the query \"$query\"");
-
-                            while ($row = mysqli_fetch_array($result) && !$afound){
-                                if (strcmp($row['Country'], $_POST['country']) == 0 && $row['PostalCode'] == $_POST['postalcode'] && strcmp($row['City'], $_POST['city']) == 0 && strcmp($row['Street'], $_POST['street']) == 0 && $row['Nr'] == $_POST['number']){
-                                    $afound = TRUE;
-                                    $aid = $row['AddressID'];
-                                }
+                            $appartment = NULL;
+                            if(isset($_POST['appartment']) && !empty($_POST['appartment'])){
+                                $appartment = $_POST['appartment'];
                             }
 
+                            $aid = searchaddress($afound, $link, $appartment);
+
                             if(!$afound){
-                                $appartment = NULL;
-                                if(isset($_POST['appartment']) && !empty($_POST['appartment'])){
-                                    $appartment = $_POST['appartment'];
-                                }
                                 $query = "INSERT INTO Addresses(Country, PostalCode, City, Street, Nr, Appartment) VALUES (?, ?, ?, ?, ?, ?)";
                                 $stmt = $link->prepare($query);
                                 $stmt->bind_param("sissis", $_POST['country'], $_POST['postalcode'], $_POST['city'], $_POST['street'], $_POST['number'], $appartment);
                                 $stmt->execute();
 
-                                $query = "SELECT AddressID FROM Addresses WHERE Country = ?, PostalCode = ?, City = ?, Street = ?, Nr = ?, Appartment = ?";
-                                $stmt = $link->prepare($query);
-                                $stmt->bind_param("sissis", $_POST['country'], $_POST['postalcode'], $_POST['city'], $_POST['street'], $_POST['number'], $appartment);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $aid = $row['AddressID'];
+                                $aid = searchaddress($afound, $link, $appartment);
                             }
 
                             $query = "INSERT INTO Users(FirstName, LastName, Email, Passwd, Phone, AddressID, BirthDate, Administrator) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                             $stmt = $link->prepare($query);
-                            $stmt->bind_param("ssssiisi", $_POST['firstname'], $_POST['lastname'], $_POST['email'], password_hash($_POST['passwd'], PASSWORD_DEFAULT), $aid, $_POST['birthdate'], 0);
+                            $hashedpass = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                            $phone = intval(preg_replace('/[^0-9]/', '', '604-619-5135'));
+                            $admin = 0;
+                            $stmt->bind_param("ssssiisi", $_POST['firstname'], $_POST['lastname'], $_POST['email'], $hashedpass, $phone, $aid, $_POST['birthdate'], $admin);
                             $stmt->execute();
 
                             header("Location: Home.php");
                         }
                     }
                     else{
-                        $str = "<script>$(\".passverification\").show();";
-                        $str .= "$(\".fill\").hide()";
-                        $str .= "$(\".exists\").hide();</script>";
+                        $str = "<script>$(document).ready(function(){";
+                        $str .= "$(\".passverification\").show();";
+                        $str .= "$(\".fill\").hide();";
+                        $str .= "$(\".exists\").hide();});</script>";
                         echo $str;
                     }
                 }
                 else{
-                    $str = "<script>$(\".passverification\").hide();";
-                    $str .= "$(\".fill\").show()";
-                    $str .= "$(\".exists\").hide();</script>";
+                    $str = "<script>$(document).ready(function(){";
+                    $str .= "$(\".passverification\").hide();";
+                    $str .= "$(\".fill\").show();";
+                    $str .= "$(\".exists\").hide();});</script>";
                     echo $str;
                 }
             }

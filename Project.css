@@ -74,6 +74,10 @@ header h1 {
     font-size: xx-large;
 }
 
+.content{
+    margin-top: 68px;
+}
+
 .form {
     margin: 100px ;
 }
@@ -135,8 +139,9 @@ fieldset > a{
     margin-bottom: 15px;
 }
 
-.fill, .attempts{
+.fill, .passverification, .exists, .attempts{
     color: red;
+    font-weight: bold;
 }
 
 .register{
@@ -153,25 +158,30 @@ fieldset > a{
     border-bottom: 1px, solid, gray;
 }
 
+#name {
+    width: 30%;
+}
+
 .filter {
     float: right;
     padding-right: 5%;
 }
 
+.flex{
+    width: 100%;
+    overflow: hidden;
+}
+
 .filters {
     border-right: 1px, solid, gray;
     overflow: auto;
-    width: 20%;
-    float: right;
-}
-
-.slider > *{
+    width: 30%;
     float: left;
 }
 
-.slider input{
+.filters input[type=number]{
     width: 40px;
-    height: 30px;
+    padding-right: 7px;
 }
 
 .checkbox{
@@ -179,15 +189,28 @@ fieldset > a{
     font-weight: normal;
 }
 
-.product {
+button:disabled,
+input[type="button"]:disabled{
+    background-color: gray;
+}
+
+#products {
+    width: 70%;
+    overflow: hidden;
+    float: right;
+}
+
+#product {
     border-radius: 10px;
     height: 200px;
+    width: 90%;
     padding: 10px;
+    margin: 10px;
     box-shadow: 3px 5px 11px black;
     position: relative;
 }
 
-.product div{
+#product div{
     height: 180px;
     width: 200px;
     padding: 10px;
@@ -197,12 +220,16 @@ fieldset > a{
     justify-content: center;
     align-items: center;
 }
-.product div img{
+#product div img{
     max-height: 180px;
     max-width: 200px;
 }
 
-.product h1{
+#product a{
+    text-decoration: none;
+}
+
+#product h1{
     font-weight: bold;
     color: black;
     font-size: 22px;
@@ -217,7 +244,7 @@ fieldset > a{
     -webkit-box-orient: vertical;
 }
 
-.product h2{
+#product h2{
     font-weight: Normal;
     color: black;
     font-size: 16px;
@@ -225,11 +252,12 @@ fieldset > a{
     margin: 0;
 }
 
-.product p{
+#product p{
     font-size: 12px;
+    position: relative;
 }
 
-.product .description{
+#product .description{
     color: rgb(180, 180, 180);
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
@@ -241,41 +269,48 @@ fieldset > a{
     -webkit-box-orient: vertical;
 }
 
-.product .warning{
+#product .warning{
     color: red;
     text-align: right;
     font-weight: bold;
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    right: 20px;
 }
 
-.product form{
+#product form{
     float: right;
-    position: abolute;
-    bottom: 0;
-    right: 0;
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
 }
 
-.product input{
+#product input{
     height: 30px;
     border-radius: 5px;
     border: solid 1px black;
     padding: 0;
-    margin: 0;
+    margin: 5px;
 }
 
-.product input[type=button]{
+#product input[type=button]{
     width: 30px;
     color: white;
     background-color: darkcyan;
     font-weight: bold;
 }
 
-.product input[type=text]{
+#product input[type=number]{
     width: 40px;
-    text-align: right;
     padding-right: 7px;
 }
 
-.product button{
+input[type=number]{
+    text-align: right;
+}
+
+#product button{
     height: 30px;
     width: 150px;
     color: white;
@@ -287,24 +322,29 @@ fieldset > a{
     margin-left: 50px;
 }
 
-.product form button img{
+#product form button img{
     height: 16px;
 }
 
-.product:hover{
+#product:hover{
     background-color: rgb(243, 243, 243);
 }
 
-.product:after{
+#product:after{
     content: "";
     display: block;
     clear: both;
 }
 
 .loggedout{
+    margin-top: 60px;
     color: black;
     font-weight: bold;
     text-align: center;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 footer{

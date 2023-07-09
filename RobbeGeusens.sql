@@ -5,23 +5,29 @@
 /*
 Every product has it's own detailed information. If it is a part of a kit, it's information will be available when asked for.
 Weight en diameter zijn in
-0.01g en 0.01mm respectievelijk
+1g en 1mm respectievelijk
 */
 CREATE TABLE Products (
     ProductID INT UNSIGNED NOT NULL AUTO_INCREMENT,
     ProductName VARCHAR(64) NOT NULL,
+    Manufacturer VARCHAR(100) NOT NULL,
     Descript TEXT,
     Stock INT UNSIGNED NOT NULL,
     ProductType CHAR NOT NULL,
     WeightG INT UNSIGNED NOT NULL,
     Resizable BIT,
     Electrical BIT,
-    Diameter INT UNSIGNED,
-    Manufacturer VARCHAR(100),
-    HeadType CHAR,
     PRIMARY KEY (ProductID)
 );
 
+CREATE TABLE Heads(
+    HeadID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ProductID INT UNSIGNED NOT NULL,
+    HeadType CHAR,
+    Diameter INT UNSIGNED,
+    PRIMARY KEY (HeadID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
 
 /*
 Dit wordt de ongevere layout van een kit description en default value van de textbox als je een kit aanmaakt
@@ -43,7 +49,7 @@ CREATE TABLE Kits (
 CREATE TABLE KitProducts (
     KitID INT UNSIGNED NOT NULL,
     ProductID INT UNSIGNED NOT NULL,
-    Quantity INT UNSIGNED NOT NULL,
+    Quantity INT UNSIGNED NOT NULL DEFAULT 1,
     FOREIGN KEY (KitID) REFERENCES Kits(KitID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     PRIMARY KEY (KitID, ProductID)
@@ -67,7 +73,7 @@ CREATE TABLE Addresses (
     City VARCHAR(85) NOT NULL,
     Street VARCHAR(100) NOT NULL,
     Nr INT UNSIGNED NOT NULL,
-    Apartment VARCHAR(4),
+    Appartment VARCHAR(4),
     PRIMARY KEY (AddressID)
 );
 
@@ -78,7 +84,7 @@ CREATE TABLE Users (
     Email VARCHAR(100) NOT NULL,
     Passwd VARCHAR(64) NOT NULL,
     Phone BIGINT UNSIGNED NOT NULL,
-    AddressID INT UNSIGNED,
+    AddressID INT UNSIGNED NOT NULL,
     BirthDate DATE,
     Administrator BIT NOT NULL DEFAULT 0,
     PRIMARY KEY (UserID),

@@ -1,136 +1,138 @@
 <?php
-class User
-{
-    private string $FirstName;
-    private string $LastName;
-    private string $Email;
-    private int $Phone;
-    private string $Country;
-    private int $PostalCode;
-    private string $City;
-    private string $Street;
-    private int $Nr;
-    private ? string $Appartment;
-    private string $BirthDate;
-    private bool $Admin;
+if(!class_exists('User')){
+    class User
+    {
+        private string $FirstName;
+        private string $LastName;
+        private string $Email;
+        private int $Phone;
+        private string $Country;
+        private int $PostalCode;
+        private string $City;
+        private string $Street;
+        private int $Nr;
+        private ? string $Appartment;
+        private string $BirthDate;
+        private bool $Admin;
 
-    public function __construct(string $cFirstName="", string $cLastName="", string $cEmail="", int $cPhone=0, $cCountry="", $cPostalCode=0, string $cCity="", string $cStreet="", int $cNr=0, string $cAppartment = "", string $cBirthDate="1-1-2000", bool $cAdmin=FALSE) {
-        $this->FirstName = $cFirstName;
-        $this->LastName = $cLastName;
-        $this->Email = $cEmail;
-        $this->Phone = $cPhone;
-        $this->Country = $cCountry;
-        $this->PostalCode = $cPostalCode;
-        $this->City = $cCity;
-        $this->Street = $cStreet;
-        $this->Nr = $cNr;
-        $this->Appartment = $cAppartment;
-        $this->BirthDate = $cBirthDate;
-        $this->Admin = $cAdmin;
-    }
-
-    public function __destruct() {}
-
-    public function getFirstName() {
-        return $this->FirstName;
-    }
-    public function setFirstName(string $xFirstName) {
-        $this->FirstName = $xFirstName;
-    }
-
-    public function getLastName() {
-        return $this->LastName;
-    }
-    public function setLastName(string $xLastName) {
-        $this->LastName = $xLastName;
-    }
-
-    public function getEmail() {
-        return $this->Email;
-    }
-    public function setEmail(string $xEmail) {
-        $this->Email = $xEmail;
-    }
-
-    public function getPhone() {
-        return $this->Phone;
-    }
-    public function setPhone(int $xPhone) {
-        $this->Phone = $xPhone;
-    }
-
-    public function getCountry() {
-        return $this->Country;
-    }
-    public function setCountry(string $xCountry) {
-        $this->Country = $xCountry;
-    }
-
-    public function getPostalCode() {
-        return $this->PostalCode;
-    }
-    public function setPostalCode(int $xPostalCode) {
-        $this->PostalCode = $xPostalCode;
-    }
-
-    public function getCity() {
-        return $this->City;
-    }
-    public function setCity(string $xCity) {
-        $this->City = $xCity;
-    }
-
-    public function getStreet() {
-        return $this->Street;
-    }
-    public function setStreet(string $xStreet) {
-        $this->Street = $xStreet;
-    }
-
-    public function getNr() {
-        return $this->Nr;
-    }
-    public function setNr(int $xNr) {
-        $this->Nr = $xNr;
-    }
-
-    public function getAppartment() {
-        return $this->Appartment;
-    }
-    public function setAppartment(string $xAppartment) {
-        $this->Appartment = $xAppartment;
-    }
-
-    public function getBirthDate() {
-        return $this->BirthDate;
-    }
-    public function setBirthDate(string $xBirthDate) {
-        $this->BirthDate = $xBirthDate;
-    }
-
-    public function getAdmin() {
-        return $this->Admin;
-    }
-    public function setAdmin(bool $xAdmin) {
-        $this->Admin = $xAdmin;
-    }
-
-    public function print() {
-        $str = "<tr><td>".$this->FirstName;
-        $str .= " ".$this->LastName."</td>";
-        $str .= "<td>".$this->Email."</td>";
-        $str .= "<td>".$this->Phone."</td>";
-        $str .= "<td>".$this->Country."</td>";
-        $str .= "<td>".$this->PostalCode;
-        $str .= " ".$this->City;
-        $str .= ", ".$this->Street;
-        $str .= " ".$this->Nr;
-        if (!empty($this->Appartment) && strlen($this->Appartment) != 0) {
-            $str .= ", ".$this->Appartment;
+        public function __construct(string $cFirstName="", string $cLastName="", string $cEmail="", int $cPhone=0, $cCountry="", $cPostalCode=0, string $cCity="", string $cStreet="", int $cNr=0, string $cAppartment = "", string $cBirthDate="1-1-2000", bool $cAdmin=FALSE) {
+            $this->FirstName = $cFirstName;
+            $this->LastName = $cLastName;
+            $this->Email = $cEmail;
+            $this->Phone = $cPhone;
+            $this->Country = $cCountry;
+            $this->PostalCode = $cPostalCode;
+            $this->City = $cCity;
+            $this->Street = $cStreet;
+            $this->Nr = $cNr;
+            $this->Appartment = $cAppartment;
+            $this->BirthDate = $cBirthDate;
+            $this->Admin = $cAdmin;
         }
-        $str .= "</td><td>".$this->BirthDate."</td>";
-        $str .= "<td>".$this->Admin."</td></tr>";
-        echo ($str);
+
+        public function __destruct() {}
+
+        public function getFirstName() {
+            return $this->FirstName;
+        }
+        public function setFirstName(string $xFirstName) {
+            $this->FirstName = $xFirstName;
+        }
+
+        public function getLastName() {
+            return $this->LastName;
+        }
+        public function setLastName(string $xLastName) {
+            $this->LastName = $xLastName;
+        }
+
+        public function getEmail() {
+            return $this->Email;
+        }
+        public function setEmail(string $xEmail) {
+            $this->Email = $xEmail;
+        }
+
+        public function getPhone() {
+            return $this->Phone;
+        }
+        public function setPhone(int $xPhone) {
+            $this->Phone = $xPhone;
+        }
+
+        public function getCountry() {
+            return $this->Country;
+        }
+        public function setCountry(string $xCountry) {
+            $this->Country = $xCountry;
+        }
+
+        public function getPostalCode() {
+            return $this->PostalCode;
+        }
+        public function setPostalCode(int $xPostalCode) {
+            $this->PostalCode = $xPostalCode;
+        }
+
+        public function getCity() {
+            return $this->City;
+        }
+        public function setCity(string $xCity) {
+            $this->City = $xCity;
+        }
+
+        public function getStreet() {
+            return $this->Street;
+        }
+        public function setStreet(string $xStreet) {
+            $this->Street = $xStreet;
+        }
+
+        public function getNr() {
+            return $this->Nr;
+        }
+        public function setNr(int $xNr) {
+            $this->Nr = $xNr;
+        }
+
+        public function getAppartment() {
+            return $this->Appartment;
+        }
+        public function setAppartment(string $xAppartment) {
+            $this->Appartment = $xAppartment;
+        }
+
+        public function getBirthDate() {
+            return $this->BirthDate;
+        }
+        public function setBirthDate(string $xBirthDate) {
+            $this->BirthDate = $xBirthDate;
+        }
+
+        public function getAdmin() {
+            return $this->Admin;
+        }
+        public function setAdmin(bool $xAdmin) {
+            $this->Admin = $xAdmin;
+        }
+
+        public function print() {
+            $str = "<tr><td>".$this->FirstName;
+            $str .= " ".$this->LastName."</td>";
+            $str .= "<td>".$this->Email."</td>";
+            $str .= "<td>".$this->Phone."</td>";
+            $str .= "<td>".$this->Country."</td>";
+            $str .= "<td>".$this->PostalCode;
+            $str .= " ".$this->City;
+            $str .= ", ".$this->Street;
+            $str .= " ".$this->Nr;
+            if (!empty($this->Appartment) && strlen($this->Appartment) != 0) {
+                $str .= ", ".$this->Appartment;
+            }
+            $str .= "</td><td>".$this->BirthDate."</td>";
+            $str .= "<td>".$this->Admin."</td></tr>";
+            echo ($str);
+        }
     }
 }
 ?>

@@ -1,0 +1,13 @@
+USE RobbeGeusens;
+
+DELETE FROM Addresses;
+DELETE FROM Users;
+DELETE FROM ShopSupply;
+DELETE FROM Shops;
+DELETE FROM Orders;
+DELETE FROM Images;
+DELETE FROM KitProducts;
+DELETE FROM OrderedKits;
+DELETE FROM Heads;
+DELETE FROM Products;
+DELETE FROM Kits;
