@@ -36,7 +36,7 @@ include "Session.php";
             </nav>
             <header>
                 <h1>
-                    Welcome
+                    Thank you
                     <?php
                     if($_SESSION['Login'])
                     {

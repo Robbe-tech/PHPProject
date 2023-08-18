@@ -2,7 +2,7 @@
 include "Session.php";
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
@@ -17,8 +17,8 @@ include "Session.php";
                 $name = $("#name").val();
                 $manufacturer = $("#manufacturer").val();
 
-                $lowprice = $("#lowprice").val() * 100;
-                $highprice = $("#highprice").val() * 100;
+                $lowprice = $("#lowprice").val();
+                $highprice = $("#highprice").val();
 
                 $minweight = $("#minweight").val();
                 $maxweight = $("#maxweight").val();
@@ -191,17 +191,12 @@ include "Session.php";
                             <input type="text" id="manufacturer" name="manufacturer"><br/><br/>
 
                             <label for="lowprice">Price:</label><br/>
-                            <div class="slider">
-                                <div id="priceslider"></div>
-                                <input type="number" class="priceValue" id="lowprice" data-index="0"/>&euro;
-                                <input type="number" class="priceValue" id="highprice" data-index="1"/>&euro;
-                            </div><br/>
+                            <input type="number" class="priceValue" id="lowprice" data-index="0" step="1"/>&euro;
+                            <input type="number" class="priceValue" id="highprice" data-index="1" step="1" aria-labelledBy="highprice"/>&euro;<br/>
 
                             <label for="minweight">Weight:</label><br/>
-                            <div class="slider">
-                                <input type="number" class="weightValue" id="minweight" data-index="0"/>g
-                                <input type="number" class="weightValue" id="maxweight" data-index="1"/>g
-                            </div><br/>
+                            <input type="number" class="weightValue" id="minweight" data-index="0" step="10"/>g
+                            <input type="number" class="weightValue" id="maxweight" data-index="1" step="10" aria-labelledBy="maxweight"/>g<br/>
 
                             <label>Type:</label><br/>
 
@@ -233,10 +228,8 @@ include "Session.php";
                             <input type="checkbox" name="drillbit" id="drillbit"><br/><br/>
 
                             <label for="mindiameter">Diameter:</label><br/>
-                            <div class="slider">
-                                <input type="number" class="diameterValue" id="mindiameter" data-index="0"/>mm
-                                <input type="number" class="diameterValue" id="maxdiameter" data-index="1"/>mm
-                            </div><br/>
+                            <input type="number" class="diameterValue" id="mindiameter" data-index="0" step="1"/>mm
+                            <input type="number" class="diameterValue" id="maxdiameter" data-index="1" step="1" aria-labelledBy="maxdiameter"/>mm<br/>
 
                             <label>Kit:</label><br/>
 

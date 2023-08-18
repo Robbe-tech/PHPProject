@@ -2,6 +2,7 @@
 if(!class_exists('User')){
     class User
     {
+        private int $ID;
         private string $FirstName;
         private string $LastName;
         private string $Email;
@@ -15,7 +16,8 @@ if(!class_exists('User')){
         private string $BirthDate;
         private bool $Admin;
 
-        public function __construct(string $cFirstName="", string $cLastName="", string $cEmail="", int $cPhone=0, $cCountry="", $cPostalCode=0, string $cCity="", string $cStreet="", int $cNr=0, string $cAppartment = "", string $cBirthDate="1-1-2000", bool $cAdmin=FALSE) {
+        public function __construct(int $cID, string $cFirstName="", string $cLastName="", string $cEmail="", int $cPhone=0, $cCountry="", $cPostalCode=0, string $cCity="", string $cStreet="", int $cNr=0, string $cAppartment = "", string $cBirthDate="1-1-2000", bool $cAdmin=FALSE) {
+            $this->ID = $cID;
             $this->FirstName = $cFirstName;
             $this->LastName = $cLastName;
             $this->Email = $cEmail;
@@ -31,6 +33,14 @@ if(!class_exists('User')){
         }
 
         public function __destruct() {}
+
+        public function getID() {
+            return $this->ID;
+        }
+
+        public function setID($xID){
+            $this->ID = $xID;
+        }
 
         public function getFirstName() {
             return $this->FirstName;

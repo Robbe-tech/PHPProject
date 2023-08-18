@@ -2,7 +2,7 @@
 <?php
 include "Session.php";
 ?>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
@@ -62,7 +62,7 @@ include "Session.php";
                         $email = $_POST['email'];
                         $password = $_POST['password'];
 
-                        $query = "SELECT u.FirstName AS FirstName, u.LastName AS LastName, u.Email AS Email, u.Passwd AS Passwd, u.Phone AS Phone, u.BirthDate AS BirthDate, u.Administrator AS Administrator, a.Country AS Country, a.PostalCode AS PostalCode, a.City AS City, a.Street AS Street, a.Nr AS Nr, a.Appartment AS Appartment";
+                        $query = "SELECT u.UserID AS UserID, u.FirstName AS FirstName, u.LastName AS LastName, u.Email AS Email, u.Passwd AS Passwd, u.Phone AS Phone, u.BirthDate AS BirthDate, u.Administrator AS Administrator, a.Country AS Country, a.PostalCode AS PostalCode, a.City AS City, a.Street AS Street, a.Nr AS Nr, a.Appartment AS Appartment";
                         $query .=  " FROM Users u JOIN Addresses a ON u.AddressID = a.AddressID WHERE u.Email = ?";
 
                         $stmt = $link->prepare($query);
@@ -72,6 +72,7 @@ include "Session.php";
 
                         while ($row = $result->fetch_assoc()){
                             if (password_verify($password, $row['Passwd'])){
+                                $_SESSION['User']->setID($row['UserID']);
                                 $_SESSION['User']->setFirstName($row['FirstName']);
                                 $_SESSION['User']->setLastName($row['LastName']);
                                 $_SESSION['User']->setEmail($row['Email']);
@@ -81,10 +82,12 @@ include "Session.php";
                                 $_SESSION['User']->setCity($row['City']);
                                 $_SESSION['User']->setStreet($row['Street']);
                                 $_SESSION['User']->setNr($row['Nr']);
-                                $_SESSION['User']->setAppartment($row['Appartment']);
+                                if (!is_null($row['Appartment'])){
+                                    $_SESSION['User']->setAppartment($row['Appartment']);
+                                }
                                 $_SESSION['User']->setBirthDate($row['BirthDate']);
-                                $_SESSION['User']->setAdmin($row['Admin']);
-                                $_SESSION['Login'] = TRUE;
+                                $_SESSION['User']->setAdmin($row['Administrator']);
+                                $_SESSION['Login'] = True;
                                 header('Location: Home.php');
                             }
                         }

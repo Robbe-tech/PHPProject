@@ -539,6 +539,7 @@ if ($kit) {
 
 #extra so it won't affect extremes
 if (isset($lowprice) && !empty($lowprice)) {
+    $lowprice *= 100;
     if ($prevwhere){
         $extrawhere .= " AND k.KitPrice >= ?";
     }
@@ -551,6 +552,7 @@ if (isset($lowprice) && !empty($lowprice)) {
 }
 
 if (isset($highprice) && !empty($highprice)) {
+    $highprice *= 100;
     if ($prevwhere) {
         $extrawhere .= " AND k.KitPrice <= ?";
     }
@@ -570,7 +572,6 @@ if (isset($minweight) && !empty($minweight)) {
         $extrawhere .= " WHERE k.WeightG >= ?";
         $prevwhere = TRUE;
     }
-    $weight = TRUE;
     $extraprep .= "i";
     array_push($extravalues, $minweight);
 }
@@ -583,17 +584,16 @@ if (isset($maxweight) && !empty($maxweight)) {
         $extrawhere .= " WHERE k.WeightG <= ?";
         $prevwhere = TRUE;
     }
-    $weight = TRUE;
     $extraprep .= "i";
     array_push($extravalues, $maxweight);
 }
 
 if (isset($mindiameter) && !empty($mindiameter)) {
     if($prevwhere){
-        $extrawhere .= " AND h.Diameter >= ".$mindiameter;
+        $extrawhere .= " AND h.Diameter >= ?";
     }
     else {
-        $extrawhere .= " WHERE h.Diameter >= ".$mindiameter;
+        $extrawhere .= " WHERE h.Diameter >= ?";
         $prevwhere = TRUE;
     }
     $extraprep .= "i";
@@ -602,10 +602,10 @@ if (isset($mindiameter) && !empty($mindiameter)) {
 
 if (isset($maxdiameter) && !empty($maxdiameter)) {
     if($prevwhere){
-        $extrawhere .= " AND h.Diameter <= ".$maxdiameter;
+        $extrawhere .= " AND h.Diameter <= ?";
     }
     else {
-        $extrawhere .= " WHERE h.Diameter <= ".$maxdiameter;
+        $extrawhere .= " WHERE h.Diameter <= ?";
         $prevwhere = TRUE;
     }
     $extraprep .= "i";
@@ -645,8 +645,8 @@ $row = $result->fetch_assoc();
 $str = "<script>";
     $str .= "$(document).ready(function(){";
         $str .= "$(\".priceValue\").attr({";
-            $str .= "\"max\": ".$row['MinPrice'].",";
-            $str .= "\"min\": ".$row['MaxPrice'];
+            $str .= "\"max\": ".($row['MinPrice'] / 100).",";
+            $str .= "\"min\": ".($row['MaxPrice'] / 100);
         $str .= "});";
         $str .= "$(\".weightValue\").attr({";
             $str .= "\"max\": ".$row['MinWeight'].",";
@@ -683,9 +683,9 @@ while ($row = $result->fetch_assoc()){
     $str .= "<p class=\"warning\" id=\"large".$id."\">You have entered a larger ammount than is currently in our stock. Currently left:".$stock."</p>";
     $str .= "<form>";
     $str .= "<input type=\"button\" value=\"-\" id=\"minus".$id."\" onclick=\"minus(".$id.")\"/>";
-    $str .= "<input type=\"number\" value=\"0\" name=\"ammount".$id."\" id=\"ammount".$id."\" min=\"0\" max=\"".$stock."\"/>";
+    $str .= "<input type=\"number\" value=\"0\" name=\"ammount".$id."\" id=\"ammount".$id."\" aria-labelledBy=\"ammount".$id."\" min=\"0\" max=\"".$stock."\"/>";
     $str .= "<input type=\"button\" value=\"+\" id=\"plus".$id."\" onclick=\"plus(".$id.", ".$stock.")\"/>";
-    $str .= "<button class=\"addcart\" id=\"addcart".$id."\" onclick=\"addtocart(".$id.", ".$stock.")\">Add to cart <img src=\"Images/ShoppingCart.png\"/></button>";
+    $str .= "<button class=\"addcart\" id=\"addcart6".$id."\" onclick=\"addtocart(".$product.", ".$stock.")\">Add to cart <img src=\"Images/ShoppingCart.png\" alt=\"Cart\"/></button>";
     $str .= "</form>";
     $str .= "</div>";
     $str .= "<script>";

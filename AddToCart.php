@@ -1,4 +1,5 @@
 <?php
+include "Session.php";
 if($_SESSION['Login']){
     include "CartClass.php";
 

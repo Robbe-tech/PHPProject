@@ -2,7 +2,7 @@
 <?php
 include "Session.php";
 ?>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
@@ -34,6 +34,20 @@ include "Session.php";
                     ?>
                 </ul>
             </nav>
+            <form action="CheckOut.php" method="post">
+                <fieldset>
+                    <legend>Cart</legend>
+                    <?php
+                    foreach ($_SESSION['Cart'] as $product){
+                        $product->getProduct()->print();
+                        echo("</br>");
+                        echo($product->getAmmount());
+                        echo("</br>");
+                    }
+                    ?>
+                    <input type="submit" value="Proceed to checkout" name="submit">
+                </fieldset>
+            </form>
         </div>
     </body>
 </html>

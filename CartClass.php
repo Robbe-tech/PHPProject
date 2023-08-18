@@ -1,19 +1,20 @@
 <?php
+include "ProductClass.php";
 if(!class_exists('CartObject')){
     class CartObject{
-        private int $ID;
+        private Product $Product;
         private int $Ammount;
 
-        public function __construct(int $cID, int $cAmmount = 1){
+        public function __construct(int $cProduct, int $cAmmount = 1){
             $this->ID=$cID;
             $this->Ammount=$cAmmount;
         }
 
-        public function getID(){
-            return $this->ID;
+        public function getProduct(){
+            return $this->Product;
         }
-        public function setID(int $xID){
-            $this->ID = $xID;
+        public function setProduct(int $xProduct){
+            $this->Product = $xProduct;
         }
 
         public function getAmmount(){
