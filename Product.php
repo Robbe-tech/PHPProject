@@ -3,7 +3,7 @@
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
         <link rel="stylesheet" href="Project.css"/>
-        <title>Header</title>
+        <title>Bits and bolts</title>
     </head>
     <body>
         <div class="wrapper">

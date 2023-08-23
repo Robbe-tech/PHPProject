@@ -16,20 +16,20 @@ if(!class_exists('User')){
         private string $BirthDate;
         private bool $Admin;
 
-        public function __construct(int $cID, string $cFirstName="", string $cLastName="", string $cEmail="", int $cPhone=0, $cCountry="", $cPostalCode=0, string $cCity="", string $cStreet="", int $cNr=0, string $cAppartment = "", string $cBirthDate="1-1-2000", bool $cAdmin=FALSE) {
-            $this->ID = $cID;
-            $this->FirstName = $cFirstName;
-            $this->LastName = $cLastName;
-            $this->Email = $cEmail;
-            $this->Phone = $cPhone;
-            $this->Country = $cCountry;
-            $this->PostalCode = $cPostalCode;
-            $this->City = $cCity;
-            $this->Street = $cStreet;
-            $this->Nr = $cNr;
-            $this->Appartment = $cAppartment;
-            $this->BirthDate = $cBirthDate;
-            $this->Admin = $cAdmin;
+        public function __construct(int $cID = 0, string $cFirstName="", string $cLastName="", string $cEmail="", int $cPhone=0, $cCountry="", $cPostalCode=0, string $cCity="", string $cStreet="", int $cNr=0, string $cAppartment = "", string $cBirthDate="1-1-2000", bool $cAdmin=FALSE) {
+            $this->setID($cID);
+            $this->setFirstName($cFirstName);
+            $this->setLastName($cLastName);
+            $this->setEmail($cEmail);
+            $this->setPhone($cPhone);
+            $this->setCountry($cCountry);
+            $this->setPostalCode($cPostalCode);
+            $this->setCity($cCity);
+            $this->setStreet($cStreet);
+            $this->setNr($cNr);
+            $this->setAppartment($cAppartment);
+            $this->setBirthDate($cBirthDate);
+            $this->setAdmin($cAdmin);
         }
 
         public function __destruct() {}

@@ -1,7 +1,7 @@
-<!DOCTYPE html>
 <?php
 include "Session.php";
 ?>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
@@ -71,6 +71,7 @@ include "Session.php";
                         $result = $stmt->get_result();
 
                         while ($row = $result->fetch_assoc()){
+                            echo($row['FirstName']);
                             if (password_verify($password, $row['Passwd'])){
                                 $_SESSION['User']->setID($row['UserID']);
                                 $_SESSION['User']->setFirstName($row['FirstName']);
@@ -108,7 +109,7 @@ include "Session.php";
                                 echo $str;
                         }
                         else{
-                            $str = "<script>$(document).ready(function{";
+                            $str = "<script>$(document).ready(function(){";
                             $str .= "$(\".fill\").show();";
                             $str .= "$(\".attempts\").hide();});</script>";
                             echo $str;

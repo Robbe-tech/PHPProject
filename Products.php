@@ -106,7 +106,7 @@ include "Session.php";
                 }
             }
 
-            function addtocart($id, $stock){
+            function addtocart($id, $Link, $KitName, $KitPrice, $Descript, $stock){
                 $ammount = $("#ammount" + $id).val()
                 if($ammount > 0){
                     if($ammount > $stock){
@@ -116,7 +116,7 @@ include "Session.php";
                         $request2 = $.ajax({
                             method:"POST",
                             url:"AddToCart.php",
-                            data: { id: $id, stock: $stock, ammount: $ammount }
+                            data: { id: $id, link:$Link, name:$KitName, price:$KitPrice, descript:$Descript, stock:$stock, ammount: $ammount }
                         });
 
                         $request2.done(function(msg){

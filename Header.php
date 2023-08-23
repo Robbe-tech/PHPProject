@@ -1,3 +1,7 @@
+
+<?php
+include "Session.php";
+?>
 <!DOCTYPE html>
 <?php
 include "User.php";

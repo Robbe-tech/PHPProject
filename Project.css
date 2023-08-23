@@ -347,6 +347,22 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+h3{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+#total{
+    margin-left: 10px;
+}
+
+#buy{
+    float:right;
+    width: fit-content;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
 footer{
     text-align: center;
 }

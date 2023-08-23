@@ -1,13 +1,13 @@
-<!DOCTYPE html>
 <?php
 include "Session.php";
 ?>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
         <link rel="stylesheet" href="Project.css"/>
-        <title>Header</title>
+        <title>Bits and bolts</title>
     </head>
     <body>
         <div class="wrapper">
@@ -34,18 +34,20 @@ include "Session.php";
                     ?>
                 </ul>
             </nav>
+            <div style="height:50px;"></div>
             <form action="CheckOut.php" method="post">
                 <fieldset>
                     <legend>Cart</legend>
                     <?php
+                    $total = 0;
                     foreach ($_SESSION['Cart'] as $product){
-                        $product->getProduct()->print();
-                        echo("</br>");
-                        echo($product->getAmmount());
-                        echo("</br>");
+                        $product->print();
+                        $total += $product->getAmmount() * $product->getPrice();
                     }
+                    $total /= 100;
+                    echo("<h1 id='total'>Total: ".number_format(floatval($total), 2, '.', '')."&euro;</h1>");
                     ?>
-                    <input type="submit" value="Proceed to checkout" name="submit">
+                    <input type="submit" value="Proceed to checkout" name="submit" id='buy' name='checkout'>
                 </fieldset>
             </form>
         </div>

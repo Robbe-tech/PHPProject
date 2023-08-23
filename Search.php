@@ -685,7 +685,7 @@ while ($row = $result->fetch_assoc()){
     $str .= "<input type=\"button\" value=\"-\" id=\"minus".$id."\" onclick=\"minus(".$id.")\"/>";
     $str .= "<input type=\"number\" value=\"0\" name=\"ammount".$id."\" id=\"ammount".$id."\" aria-labelledBy=\"ammount".$id."\" min=\"0\" max=\"".$stock."\"/>";
     $str .= "<input type=\"button\" value=\"+\" id=\"plus".$id."\" onclick=\"plus(".$id.", ".$stock.")\"/>";
-    $str .= "<button class=\"addcart\" id=\"addcart6".$id."\" onclick=\"addtocart(".$product.", ".$stock.")\">Add to cart <img src=\"Images/ShoppingCart.png\" alt=\"Cart\"/></button>";
+    $str .= "<button class=\"addcart\" id=\"addcart".$id."\" onclick=\"addtocart(".$id.", '".$row['Link']."', '".$row['KitName']."', ".$row['KitPrice'].", '".$row['Descript']."', ".$stock.")\">Add to cart <img src=\"Images/ShoppingCart.png\" alt=\"Cart\"/></button>";
     $str .= "</form>";
     $str .= "</div>";
     $str .= "<script>";

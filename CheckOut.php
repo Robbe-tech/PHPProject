@@ -1,13 +1,13 @@
-<!DOCTYPE html>
 <?php
 include "Session.php";
 ?>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="Reset.css">
         <link rel="stylesheet" href="Project.css"/>
-        <title>Header</title><script src="jquery-ui-1.13.0.custom/external/jquery/jquery.js"></script>
+        <title>Bits and bolts</title><script src="jquery-ui-1.13.0.custom/external/jquery/jquery.js"></script>
         <script>
             $(document).ready(function(){
                 $(".fill").hide();
@@ -39,6 +39,7 @@ include "Session.php";
                     ?>
                 </ul>
             </nav>
+            <div style="height:50px;"></div>
             <form action="CheckOut.php" method="post">
                 <fieldset>
                     <legend>Address</legend>
@@ -55,7 +56,7 @@ include "Session.php";
                     <label for="appartment">Appartment:</label>
                     <input type="text" name="appartment" id="appartment"><br/><br/>
                     <p class="fill">All fields except appartment need to be filled.</p>
-                    <input type="submit" value="Buy" name="buy">
+                    <input type="submit" value="Buy" name="buy" style='margin-bottom:10px;'>
                 </fieldset>
             </form>
             <?php
@@ -85,7 +86,7 @@ include "Session.php";
                 return $aid;
             }
 
-            if (isset($_POST['register'])){
+            if (isset($_POST['buy'])){
                 if (isset($_POST['country']) && isset($_POST['postalcode']) && isset($_POST['city']) && isset($_POST['street']) && isset($_POST['number']) && !empty($_POST['country']) && !empty($_POST['postalcode']) && !empty($_POST['city']) && !empty($_POST['street']) && !empty($_POST['number'])){
                     include("Connect.php");
 
@@ -107,18 +108,21 @@ include "Session.php";
 
                     $query = "INSERT INTO Orders(UserID, Discount, PlacementDate, DeliveryDate, PlacedShop, DeliveryAddress) VALUES (?, 0, ?, NULL, NULL, ?)";
                     $stmt = $link->prepare($query);
-                    $stmt->bind_param("isi", $_SESSION['User']->getID(), date('Y-m-d', strtotime(str_replace('-', '/', time()))), $aid);
+                    $time = date('Y-m-d');
+                    $uid = $_SESSION['User']->getID();
+                    $stmt->bind_param("isi", $uid, $time, $aid);
                     $stmt->execute();
                     
                     $query = "SELECT OrderID FROM Orders WHERE UserID = ? ORDER BY OrderID DESC";
                     $stmt = $link->prepare($query);
-                    $stmt->bind_param("i", $_SESSION['User']->getID());
+                    $stmt->bind_param("i", $uid);
+                    $stmt->execute();
                     $result = $stmt->get_result();
                     $row = $result->fetch_assoc();
                     $orderID = $row["OrderID"];
 
                     foreach ($_SESSION['Cart'] as $product){
-                        $kitID = $product->getProduct()->getID();
+                        $kitID = $product->getID();
                         $ammount = $product->getAmmount();
                         $query = "INSERT INTO OrderedKits(OrderID, KitID, Quantity) VALUES (?, ?, ?)";
                         $stmt = $link->prepare($query);
@@ -129,6 +133,7 @@ include "Session.php";
                         $stmt = $link->prepare($query);
                         $stmt->bind_param("i", $kitID);
                         $stmt->execute();
+                        $result = $stmt->get_result();
                         while($row = $result->fetch_assoc()){
                             $quantity = $row["Quantity"] * $ammount;
                             $productID = $row['productID'];
@@ -139,7 +144,7 @@ include "Session.php";
                         }
                     }
 
-                    header("ThankYou.php");
+                    header("Location: ThankYou.php");
                 }
             }
             else{

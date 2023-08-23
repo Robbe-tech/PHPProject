@@ -1,3 +1,6 @@
+<?php
+include "Session.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -33,8 +36,6 @@
             </nav>
             <p class="loggedout">
                 <?php
-                session_start();
-
                 if($_SESSION['Login']){
                     session_unset();
                     session_destroy();

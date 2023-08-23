@@ -9,11 +9,11 @@ if(!class_exists('Product')){
         private string $Description;
         
         public function __construct(int $cID, string $cImage="Images/NoImage.png", string $cName="", int $cPrice=0, string $cDescription="") {
-            $this->ID=$cID;
-            $this->Image=$cImage;
-            $this->Name=$cName;
-            $this->Price=$cPrice;
-            $this->Description=$cDescription;
+            $this->setID($cID);
+            $this->setImage($cImage);
+            $this->setName($cName);
+            $this->setPrice($cPrice);
+            $this->setDescription($cDescription);
         }
 
         public function __destruct() {}
@@ -54,10 +54,10 @@ if(!class_exists('Product')){
         }
 
         public function print() {
-            $str = "<a href=\"Product.php?id=".$this->ID."\"><div class=\"image\">";
+            $str = "<div class=\"image\">";
             $str .= "<img src=\"".$this->Image."\" alt=\"Image not found\"/>";
-            $str .= "</div></a>";
-            $str .= "<a href=\"Product.php?id=".$this->ID."\"><h1>".$this->Name."</h1></a>";
+            $str .= "</div>";
+            $str .= "<h1>".$this->Name."</h1>";
             $str .= "<h2>&euro;".bcdiv($this->Price, 100, 2)."</h2>";
             $str .= "<p class=\"description\">".$this->Description."</p>";
             echo ($str);

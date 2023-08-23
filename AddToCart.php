@@ -4,6 +4,10 @@ if($_SESSION['Login']){
     include "CartClass.php";
 
     $id = intval($_POST['id']);
+    $link = $_POST['link'];
+    $name = $_POST['name'];
+    $price = intval($_POST['price']);
+    $descript = $_POST['descript'];
     $stock = intval($_POST['stock']);
     $ammount = intval($_POST['ammount']);
 
@@ -22,7 +26,7 @@ if($_SESSION['Login']){
         }
     }
     if(!$found){
-        array_push($_SESSION['Cart'], new CartObject($id, $ammount));
+        array_push($_SESSION['Cart'], new CartObject($id, $link, $name, $price, $descript, $ammount));
     }
     if($more){
         echo "You can not add more products then are in our stock of ".$stock.".";
